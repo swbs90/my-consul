@@ -1,0 +1,83 @@
+client:
+  enabled: true
+connectInject:
+  metrics:
+    defaultPrometheusScrapePort: 20200
+    defaultPrometheusScrapePath: "/metrics"
+  consulNamespaces:
+    mirroringK8S: true
+  enabled: true
+  replicas: 1
+controller:
+  enabled: true
+dns:
+  enableRedirection: true
+  enabled: true
+global:
+  acls:
+    manageSystemACLs: true
+  enableConsulNamespaces: true
+  enabled: true
+  enterpriseLicense:
+    secretKey: key
+    secretName: license
+  image: hashicorp/consul-enterprise:1.13.7-ent
+  imageEnvoy: envoyproxy/envoy:v1.22.5
+  imageK8S: hashicorp/consul-k8s-control-plane:0.49.5
+  metrics:
+    enabled: true
+    enableAgentMetrics: true
+    agentMetricsRetentionTime: "1m"
+    enableGatewayMetrics: true
+  tls:
+    enableAutoEncrypt: true
+    enabled: true
+    httpsOnly: false
+    verify: false
+metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: "20200"
+server:
+  enabled: true
+  replicas: 3
+  storageClass: gp2
+ui:
+  enabled: true
+  service:
+    annotations: |
+      "service.beta.kubernetes.io/aws-load-balancer-type": "nlb"
+      "service.beta.kubernetes.io/aws-load-balancer-nlb-target-type": "ip"
+      "service.beta.kubernetes.io/aws-load-balancer-ip-address-mode": ipv4
+      "service.beta.kubernetes.io/aws-load-balancer-type": "external"
+      "service.beta.kubernetes.io/load-balancer-source-ranges": 0.0.0.0/0
+      "service.beta.kubernetes.io/aws-load-balancer-scheme": "internet-facing"
+        #"service.beta.kubernetes.io/aws-load-balancer-subnets": subnet-0ae2c1da9d837b8a9, subnet-0b50edf780d87b3cc, subnet-0ef08eb149a064713
+      'service.beta.kubernetes.io/aws-load-balancer-attributes': "load_balancing.cross_zone.enabled=true"
+    enabled: true
+    port:
+      http: 80
+      https: 443
+    type: LoadBalancer
+  metrics:
+    enabled: true # by default, this inherits from the value global.metrics.enabled
+    provider: "prometheus"
+    baseURL: http://prometheus-server
+ingressGateways:
+  defaults:
+    replicas: 1
+    service:
+      annotations: |
+        "service.beta.kubernetes.io/aws-load-balancer-type": "nlb"
+        "service.beta.kubernetes.io/aws-load-balancer-nlb-target-type": ip
+        "service.beta.kubernetes.io/aws-load-balancer-ip-address-mode": ipv4
+        "service.beta.kubernetes.io/aws-load-balancer-type": external
+        "service.beta.kubernetes.io/load-balancer-source-ranges": 0.0.0.0/0
+        "service.beta.kubernetes.io/aws-load-balancer-scheme": "internet-facing"
+          #"service.beta.kubernetes.io/aws-load-balancer-subnets": subnet-0ae2c1da9d837b8a9, subnet-0b50edf780d87b3cc, subnet-0ef08eb149a064713
+        'service.beta.kubernetes.io/aws-load-balancer-attributes': "load_balancing.cross_zone.enabled=true"
+      type: LoadBalancer
+  enabled: true
+prometheus:
+  enabled: true
