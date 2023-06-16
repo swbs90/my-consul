@@ -7,7 +7,7 @@ connectInject:
   consulNamespaces:
     mirroringK8S: true
   enabled: true
-  replicas: 1
+  replicas: 2
 controller:
   enabled: true
 dns:
